@@ -54,6 +54,11 @@ const users = [
     ]
   }
 ]
+
+function isUserExisting(id, user) {
+  return !isNaN(id) && user !== undefined;
+} 
+
 app.use(express.json());
 
 app.get('/users', (req, res) => {
@@ -63,16 +68,19 @@ app.get('/users', (req, res) => {
 app.get('/users/:id', (req, res) => {
   let id = parseInt(req.params.id);
   let user = users.find(user => user.id === id )
-  console.log(user);
-  if (isNaN(id) || user === undefined){
+  if (!isUserExisting(id, user)){
     return res.status(400).send({ error: 'Invalid user id' });
   }
-  res.json(users.find(user => user.id === id ));
+  res.json(user);
 })
 
-app.post('/products', (req, res) => {
-  const newProduct = req.body;
-  res.status(201).json({ message: 'Продукт добавлен', product: newProduct });
+app.get("/users/:id/balance", (req, res) => {
+  let id = parseInt(req.params.id);
+  let user = users.find(user => user.id === id )
+  if (!isUserExisting(id, user)){
+    return res.status(400).send({ error: 'Invalid user id' });
+  }
+  res.json(`${user.balance} ${user.currency}`);
 });
 
 app.listen(PORT, () => {
