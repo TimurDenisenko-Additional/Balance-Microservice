@@ -83,6 +83,15 @@ app.get("/users/:id/balance", (req, res) => {
   res.json(`${user.balance} ${user.currency}`);
 });
 
+app.get("/users/:id/transactions", (req, res) => {
+  let id = parseInt(req.params.id);
+  let user = users.find(user => user.id === id )
+  if (!isUserExisting(id, user)){
+    return res.status(400).send({ error: 'Invalid user id' });
+  }
+  res.json(user.transaction_history);
+});
+
 app.listen(PORT, () => {
   console.log(`Microservice is running`);
 });
