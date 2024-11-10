@@ -62,11 +62,11 @@ function isUserExisting(id, user) {
 
 app.use(express.json());
 
-app.get('/users', (req, res) => {
+app.get('/api/users', (req, res) => {
   res.json(users);
 });
 
-app.get('/users/:id', (req, res) => {
+app.get('/api/users/:id', (req, res) => {
   let id = parseInt(req.params.id);
   let user = users.find(user => user.id === id )
   if (!isUserExisting(id, user)){
@@ -75,7 +75,7 @@ app.get('/users/:id', (req, res) => {
   res.json(user);
 })
 
-app.get("/users/:id/balance", (req, res) => {
+app.get("/api/users/:id/balance", (req, res) => {
   let id = parseInt(req.params.id);
   let user = users.find(user => user.id === id )
   if (!isUserExisting(id, user)){
@@ -84,7 +84,7 @@ app.get("/users/:id/balance", (req, res) => {
   res.json(`${user.balance} ${user.currency}`);
 });
 
-app.get("/users/:id/transactions", (req, res) => {
+app.get("/api/users/:id/transactions", (req, res) => {
   let id = parseInt(req.params.id);
   let user = users.find(user => user.id === id )
   if (!isUserExisting(id, user)){
@@ -93,7 +93,7 @@ app.get("/users/:id/transactions", (req, res) => {
   res.json(user.transaction_history);
 });
 
-app.post('/users', (req, res) => {
+app.post('/api/users', (req, res) => {
   const { username, email, balance, currency } = req.body;
   if (!username || !email || isNaN(balance) || !currency) {
     return res.status(400).json({ error: "All fields are required"});
@@ -110,7 +110,7 @@ app.post('/users', (req, res) => {
   res.status(201).json({ message: "User created successfully", user: newUser });
 });
 
-app.post('/users/:id/withdraw', (req, res) => {
+app.post('/api/users/:id/withdraw', (req, res) => {
   let id = parseInt(req.params.id);
   const { amount } = req.body;
   const user = users.find(user => user.id === id);
@@ -125,7 +125,7 @@ app.post('/users/:id/withdraw', (req, res) => {
   res.json({ message: "Withdrawal successful", user });
 });
 
-app.post('/users/:id/transfer', (req, res) => {
+app.post('/api/users/:id/transfer', (req, res) => {
   const senderId = parseInt(req.params.id);
   const { recipientId, amount } = req.body;
   const sender = users.find(user => user.id === senderId);
