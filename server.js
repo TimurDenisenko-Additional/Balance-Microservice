@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.use(express.json());
 
 const users = [
   { id: 1, username: 'Timur', email: "timur@gmail.com", balance: 300, currency: "EUR", 
@@ -90,6 +91,24 @@ app.get("/users/:id/transactions", (req, res) => {
     return res.status(400).send({ error: 'Invalid user id' });
   }
   res.json(user.transaction_history);
+});
+
+app.post('/users', (req, res) => {
+  const { username, email, balance, currency } = req.body;
+
+  if (!username || !email || isNaN(balance) || !currency) {
+    return res.status(400).json({ error: "All fields are required"});
+  }
+  const newUser = {
+    id: ++users.length,
+    username,
+    email,
+    balance,
+    currency,
+    transaction_history: []
+  };
+  users.push(newUser);
+  res.status(201).json({ message: "User created successfully", user: newUser });
 });
 
 app.listen(PORT, () => {
