@@ -125,6 +125,28 @@ app.post('/users/:id/withdraw', (req, res) => {
   res.json({ message: "Withdrawal successful", user });
 });
 
+app.post('/users/:id/transfer', (req, res) => {
+  const senderId = parseInt(req.params.id);
+  const { recipientId, amount } = req.body;
+  const sender = users.find(user => user.id === senderId);
+  const recipient = users.find(user => user.id === recipientId);
+  if (!isUserExisting(senderId, sender)) {
+    return res.status(404).json({ error: "Sender not found" });
+  }
+  if (!isUserExisting(recipientId, recipient)) {
+    return res.status(404).json({ error: "Recipient not found" });
+  }
+  if (sender.balance < amount) {
+    return res.status(400).json({ error: "Insufficient balance" });
+  }
+  sender.balance -= amount;
+  recipient.balance += amount;
+  const transactionDate = new Date();
+  sender.transaction_history.push({ type: "Transfer", sum: -amount, date: transactionDate, id: recipientId });
+  recipient.transaction_history.push({ type: "Transfer", sum: amount, date: transactionDate, id: senderId });
+  res.json({ message: "Transfer successful", sender, recipient });
+});
+
 app.listen(PORT, () => {
   console.log(`Microservice is running`);
 });
