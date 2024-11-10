@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>API Documentation</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
 </head>
 <body class="bg-light">
     <div class="container my-5">
@@ -12,7 +11,7 @@
         
         <section>
             <h2>Base URL</h2>
-            <p><code>http://ls2.denisenko.com/api</code></p>
+            <p><code>http://ls2.denisenko.com</code></p>
         </section>
 
         <section>
@@ -33,6 +32,28 @@
     },
     ...
 ]
+                </pre>
+            </div>
+
+            <div class="mb-4">
+                <h3>GET /users/:id</h3>
+                <p>Retrieve details of a specific user by ID.</p>
+                <p><strong>Response:</strong></p>
+                <pre>
+{
+    "id": 1,
+    "username": "JohnDoe",
+    "email": "john.doe@example.com",
+    "balance": 100.00,
+    "currency": "USD",
+    "transaction_history": [
+        {
+            "type": "Deposit",
+            "amount": 50,
+            "date": "2024-01-01T12:00:00Z"
+        }
+    ]
+}
                 </pre>
             </div>
 
@@ -61,26 +82,78 @@
             </div>
 
             <div class="mb-4">
-                <h3>PUT /users/:id</h3>
-                <p>Update an existing user.</p>
+                <h3>POST /users/:id/deposit</h3>
+                <p>Add funds to a user account.</p>
                 <p><strong>Request Body:</strong></p>
                 <pre>
 {
-    "username": "UpdatedName",
-    "email": "updated.email@example.com",
-    "balance": 150.00,
-    "currency": "EUR"
+    "amount": 50.00
 }
                 </pre>
                 <p><strong>Response:</strong></p>
                 <pre>
 {
-    "id": 1,
-    "username": "UpdatedName",
-    "email": "updated.email@example.com",
-    "balance": 150.00,
-    "currency": "EUR"
+    "message": "Deposit successful",
+    "new_balance": 150.00
 }
+                </pre>
+            </div>
+
+            <div class="mb-4">
+                <h3>POST /users/:id/withdraw</h3>
+                <p>Withdraw funds from a user account.</p>
+                <p><strong>Request Body:</strong></p>
+                <pre>
+{
+    "amount": 20.00
+}
+                </pre>
+                <p><strong>Response:</strong></p>
+                <pre>
+{
+    "message": "Withdrawal successful",
+    "new_balance": 80.00
+}
+                </pre>
+            </div>
+
+            <div class="mb-4">
+                <h3>POST /users/:id/transfer</h3>
+                <p>Transfer funds from one user to another.</p>
+                <p><strong>Request Body:</strong></p>
+                <pre>
+{
+    "recipient_id": 2,
+    "amount": 30.00
+}
+                </pre>
+                <p><strong>Response:</strong></p>
+                <pre>
+{
+    "message": "Transfer successful",
+    "sender_new_balance": 70.00,
+    "recipient_new_balance": 130.00
+}
+                </pre>
+            </div>
+
+            <div class="mb-4">
+                <h3>GET /users/:id/transactions</h3>
+                <p>Retrieve the transaction history of a user.</p>
+                <p><strong>Response:</strong></p>
+                <pre>
+[
+    {
+        "type": "Deposit",
+        "amount": 50.00,
+        "date": "2024-01-01T12:00:00Z"
+    },
+    {
+        "type": "Withdrawal",
+        "amount": 20.00,
+        "date": "2024-01-02T15:00:00Z"
+    }
+]
                 </pre>
             </div>
 
@@ -97,7 +170,7 @@
         </section>
 
         <footer class="mt-5">
-            <p>API Documentation for <strong>ls2.denisenko.com</strong>. Built with ❤️ by Your Name.</p>
+            <p>API Documentation for <strong>ls2.denisenko.com</strong></p>
         </footer>
     </div>
 </body>
