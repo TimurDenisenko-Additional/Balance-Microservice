@@ -147,6 +147,20 @@ app.post('/api/users/:id/transfer', (req, res) => {
   res.json({ message: "Transfer successful", sender, recipient });
 });
 
+app.put('/api/users/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const { username, email, balance, currency } = req.body;
+  const user = users.find(user => user.id === id);
+  if (!isUserExisting(id, user)) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  if (username) user.username = username;
+  if (email) user.email = email;
+  if (!isNaN(balance)) user.balance = balance;
+  if (currency) user.currency = currency;
+  res.json(user);
+});
+
 app.listen(PORT, () => {
   console.log(`Microservice is running`);
 });
