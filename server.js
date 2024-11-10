@@ -70,7 +70,7 @@ app.get('/users/:id', (req, res) => {
   let id = parseInt(req.params.id);
   let user = users.find(user => user.id === id )
   if (!isUserExisting(id, user)){
-    return res.status(400).send({ error: 'Invalid user id' });
+    return res.status(404).json({ error: "User not found" });
   }
   res.json(user);
 })
@@ -79,7 +79,7 @@ app.get("/users/:id/balance", (req, res) => {
   let id = parseInt(req.params.id);
   let user = users.find(user => user.id === id )
   if (!isUserExisting(id, user)){
-    return res.status(400).send({ error: 'Invalid user id' });
+    return res.status(404).json({ error: "User not found" });
   }
   res.json(`${user.balance} ${user.currency}`);
 });
@@ -88,14 +88,13 @@ app.get("/users/:id/transactions", (req, res) => {
   let id = parseInt(req.params.id);
   let user = users.find(user => user.id === id )
   if (!isUserExisting(id, user)){
-    return res.status(400).send({ error: 'Invalid user id' });
+    return res.status(404).json({ error: "User not found" });
   }
   res.json(user.transaction_history);
 });
 
 app.post('/users', (req, res) => {
   const { username, email, balance, currency } = req.body;
-
   if (!username || !email || isNaN(balance) || !currency) {
     return res.status(400).json({ error: "All fields are required"});
   }
@@ -109,6 +108,21 @@ app.post('/users', (req, res) => {
   };
   users.push(newUser);
   res.status(201).json({ message: "User created successfully", user: newUser });
+});
+
+app.post('/users/:id/withdraw', (req, res) => {
+  let id = parseInt(req.params.id);
+  const { amount } = req.body;
+  const user = users.find(user => user.id === id);
+  if (!isUserExisting(id, user)) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  if (user.balance < amount) {
+    return res.status(400).json({ error: "Insufficient balance" });
+  }
+  user.balance -= amount;
+  user.transaction_history.push({ type: "Withdraw", sum: amount, date: new Date() });
+  res.json({ message: "Withdrawal successful", user });
 });
 
 app.listen(PORT, () => {
