@@ -18,6 +18,17 @@
             <h2>Transaction History</h2>
             <ul id="transactions"></ul>
         </div>
+        <div class="transfer-form">
+            <h2>Transfer Money</h2>
+            <form id="transferForm">
+                <label for="recipientId">Recipient ID:</label>
+                <input type="number" id="recipientId" required>
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" step="0.01" required min="0">
+                <button type="submit">Transfer</button>
+            </form>
+            <p id="transferMessage"></p>
+        </div>
     </div>
     <script src="dashboardScript.js"></script>
 </body>

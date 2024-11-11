@@ -19,7 +19,7 @@ h1, h2 {
     color: #2a9d8f;
 }
 
-.user-info, .transaction-history {
+.user-info, .transaction-history, .transfer-form {
     margin-top: 20px;
 }
 
@@ -38,4 +38,35 @@ h1, h2 {
 
 .transaction-history li:hover {
     background: #e6f7ff;
+}
+
+.transfer-form label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+.transfer-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.transfer-form button {
+    background-color: #2a9d8f;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.transfer-form button:hover {
+    background-color: #21867a;
+}
+
+#transferMessage {
+    margin-top: 10px;
+    color: #e76f51;
 }

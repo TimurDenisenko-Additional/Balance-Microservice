@@ -155,7 +155,7 @@ app.post('/users/:id/transfer', (req, res) => {
   const senderId = parseInt(req.params.id);
   const { recipientId, amount } = req.body;
   const sender = users.find(user => user.id === senderId);
-  const recipient = users.find(user => user.id === recipientId);
+  const recipient = users.find(user => user.id === parseInt(recipientId));
   if (!isUserExisting(senderId, sender)) {
     return res.status(404).json({ error: "Sender not found" });
   }

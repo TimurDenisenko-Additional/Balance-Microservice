@@ -61,4 +61,30 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error fetching data:", error);
             document.body.innerHTML = `<h1>${error.message}</h1>`;
         });
+
+    document.getElementById("transferForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const recipientId = document.getElementById("recipientId").value;
+        const amount = parseFloat(document.getElementById("amount").value);
+
+        fetch(`${baseUrl}/users/${userId}/transfer`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ recipientId, amount }),
+        })
+            .then(response => {
+                if (!response.ok) throw new Error("Transfer failed");
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById("transferMessage").textContent = "Transfer successful!";
+                setTimeout(() => location.reload(), 1000);
+            })
+            .catch(error => {
+                console.error("Error transferring money:", error);
+                document.getElementById("transferMessage").textContent = "Transfer failed. Please try again.";
+            });
+    });
 });
