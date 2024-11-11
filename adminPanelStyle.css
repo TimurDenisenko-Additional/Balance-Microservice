@@ -87,3 +87,58 @@ form button {
 .cancel-btn:hover {
     background-color: #c94c40;
 }
+
+table td button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    padding: 5px;
+    transition: transform 0.2s ease;
+}
+
+.edit-btn {
+    color: #2a9d8f;
+}
+
+.edit-btn:hover {
+    color: #21867a;
+    transform: scale(1.2);
+}
+
+.delete-btn {
+    color: #e76f51;
+}
+
+.delete-btn:hover {
+    color: #c94c40;
+    transform: scale(1.2);
+}
+
+.toggle-header {
+    display: inline-block;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    color: #e76f51;
+    text-align: left;
+    transition: color 0.3s ease, transform 0.3s ease;
+    padding: 5px 0;
+}
+
+.toggle-header:hover {
+    color: #f4a261;
+    transform: scale(1.05);
+}
+
+.content {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+}
+
+.content.open {
+    max-height: 100%;
+    opacity: 1;
+}

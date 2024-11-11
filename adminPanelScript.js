@@ -18,8 +18,8 @@ function fetchUsers() {
                     <td>${user.balance}</td>
                     <td>${user.currency}</td>
                     <td>
-                        <button onclick="editUser(${user.id}, '${user.username}', '${user.email}', ${user.balance}, '${user.currency}')">Edit</button>
-                        <button onclick="deleteUser(${user.id})">Delete</button>
+                        <button class="edit-btn" title="Edit User" onclick="editUser(${user.id}, '${user.username}', '${user.email}', ${user.balance}, '${user.currency}')">✏️</button>
+                        <button class="delete-btn" title="Delete User" onclick="deleteUser(${user.id})">🗑️</button>
                     </td>
                 `;
                 tableBody.appendChild(row);
