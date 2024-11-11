@@ -9,15 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     fetch(`${baseUrl}/users/${userId}`)
-        .then(response => {
-            if (!response.ok) throw new Error("User not found");
-            return response.json();
-        })
+        .then(response => response.json())
         .then(user => {
             document.getElementById("username").textContent = user.username;
             document.getElementById("email").textContent = user.email;
             document.getElementById("balance").textContent = `${user.balance} ${user.currency}`;
-
             return fetch(`${baseUrl}/users/${userId}/transactions`);
         })
         .then(response => response.json())
@@ -62,29 +58,30 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.innerHTML = `<h1>${error.message}</h1>`;
         });
 
-    document.getElementById("transferForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const recipientId = document.getElementById("recipientId").value;
-        const amount = parseFloat(document.getElementById("amount").value);
-
-        fetch(`${baseUrl}/users/${userId}/transfer`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ recipientId, amount }),
-        })
-            .then(response => {
-                if (!response.ok) throw new Error("Transfer failed");
-                return response.json();
+        document.getElementById("transferForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const recipientId = document.getElementById("recipientId").value;
+            const amount = parseFloat(document.getElementById("amount").value);
+    
+            fetch(`${baseUrl}/users/${userId}/transfer`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ recipientId, amount }),
             })
-            .then(data => {
-                document.getElementById("transferMessage").textContent = "Transfer successful!";
-                setTimeout(() => location.reload(), 1000);
-            })
-            .catch(error => {
-                console.error("Error transferring money:", error);
-                document.getElementById("transferMessage").textContent = "Transfer failed. Please try again.";
-            });
-    });
+                .then(response => {
+                    if (!response.ok) throw new Error("Transfer failed");
+                    if (recipientId === userId) throw new Error("Recipient id is equaling user id");
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById("transferMessage").innerHTML = "<strong style='color: green;'>Transfer Successful!</strong>";
+                    setTimeout(() => location.reload(), 1000);
+                })
+                .catch(error => {
+                    console.error("Error transferring money:", error);
+                    document.getElementById("transferMessage").innerHTML = "<strong style='color: red;'>Transfer Failed. Please try again.</strong>";
+                });
+        });
 });
