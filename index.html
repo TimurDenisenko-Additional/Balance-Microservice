@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>API Documentation</title>
 </head>
 <body class="bg-light">
@@ -15,7 +16,8 @@
         </section>
 
         <section>
-            <h2>Endpoints</h2>
+            <h2 onclick="toggleSection('endpoints')" id="endpointsHeader">Endpoints</h2>
+            <div id="endpoints">
 
             <div class="mb-4">
                 <h3>GET /users</h3>
@@ -167,11 +169,21 @@
 }
                 </pre>
             </div>
+            </div>
         </section>
-
-        <footer class="mt-5">
-            <p>API Documentation for <strong>ls2.denisenko.com</strong></p>
-        </footer>
     </div>
+    <script>
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section.style.maxHeight) {
+                section.style.maxHeight = null; 
+            } else {
+                section.style.maxHeight = section.scrollHeight + "px";
+            }
+        }
+    </script>
 </body>
+<footer class="mt-5">
+    <p>API Documentation for <strong>ls2.denisenko.com</strong></p>
+</footer>
 </html>
