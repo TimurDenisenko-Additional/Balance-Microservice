@@ -182,6 +182,40 @@
             </div>
             </div>
         </section>
+
+        <section>
+            <h2 onclick="toggleSection('dashboard')" id="dashboardHeader">Dashboard</h2>
+            <div id="dashboard" class="mb-4">
+                <h3>Dashboard Features</h3>
+                <p>The Dashboard provides an overview of the user's information and allows for the following actions:</p>
+                <ul>
+                    <li><strong>View User Information:</strong> Displays the username, email, and account balance.</li>
+                    <li><strong>Transaction History:</strong> Lists all transactions related to the user, including deposits, withdrawals, and transfers.</li>
+                    <li><strong>Transfer Money:</strong> Allows users to transfer money to other users by specifying the recipient ID and amount.</li>
+                </ul>
+                <p><strong>Access URL:</strong></p>
+                <pre>http://ls2.denisenko.com/dashboard</pre>
+                <p><strong>Example Query:</strong> User ID is passed as a URL parameter, e.g., <code>?id=1</code>.</p>
+            </div>
+        </section>
+        
+        <section>
+            <h2 onclick="toggleSection('adminPanel')" id="adminPanelHeader">Admin Panel</h2>
+            <div id="adminPanel" class="mb-4">
+                <h3>Admin Panel Features</h3>
+                <p>The Admin Panel allows administrators to manage user accounts and perform the following operations:</p>
+                <ul>
+                    <li><strong>View All Users:</strong> Displays a list of all registered users in a table format.</li>
+                    <li><strong>Add a User:</strong> Includes a form to add new users with details like username, email, balance, and currency.</li>
+                    <li><strong>Edit a User:</strong> Allows administrators to update user information directly within the interface.</li>
+                    <li><strong>Delete a User:</strong> Provides a quick option to remove users from the database.</li>
+                </ul>
+                <p><strong>Access URL:</strong></p>
+                <pre>http://ls2.denisenko.com/admin</pre>
+                <p><strong>Example Usage:</strong> The admin panel provides an interactive interface for managing the database in real-time.</p>
+            </div>
+        </section>
+        
     </div>
     <script>
         function toggleSection(sectionId) {
