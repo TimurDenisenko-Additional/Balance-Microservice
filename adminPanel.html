@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="adminPanelStyle.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Panel</h1>
+        <section>
+            <h2>Users</h2>
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Balance</th>
+                        <th>Currency</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Users will be dynamically added here -->
+                </tbody>
+            </table>
+        </section>
+        <section>
+            <h2 id="formHeader">Add User</h2>
+            <form id="userForm">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="number" id="balance" placeholder="Balance" required>
+                <select id="currency" required>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="GBP">GBP</option>
+                </select>
+                <button type="submit" class="action-btn">Add User</button>
+                <button type="button" id="cancelEdit" class="cancel-btn" style="display: none;">Cancel</button>
+            </form>
+        </section>
+    </div>
+    <script src="adminPanelScript.js"></script>
+</body>
+</html>
