@@ -8,7 +8,7 @@
 </head>
 <body class="bg-light">
     <div class="container my-5">
-        <h1 class="mb-4">API Documentation</h1>
+        <h1>API Documentation</h1>
         
         <section>
             <h2>Base URL</h2>
@@ -84,64 +84,28 @@
             </div>
 
             <div class="mb-4">
-                <h3>POST /users/:id/deposit</h3>
-                <p>Add funds to a user account.</p>
-                <p><strong>Request Body:</strong></p>
-                <pre>
-{
-    "amount": 50.00
-}
-                </pre>
+                <h3>DELETE /users/:id</h3>
+                <p>Delete a user by their ID.</p>
                 <p><strong>Response:</strong></p>
                 <pre>
 {
-    "message": "Deposit successful",
-    "new_balance": 150.00
+    "message": "User deleted successfully."
 }
                 </pre>
             </div>
 
             <div class="mb-4">
-                <h3>POST /users/:id/withdraw</h3>
-                <p>Withdraw funds from a user account.</p>
-                <p><strong>Request Body:</strong></p>
-                <pre>
-{
-    "amount": 20.00
-}
-                </pre>
+                <h3>GET /users/:id/balance</h3>
+                <p>Retrieve the balance of a specific user by their ID.</p>
                 <p><strong>Response:</strong></p>
                 <pre>
-{
-    "message": "Withdrawal successful",
-    "new_balance": 80.00
-}
+"300 EUR"
                 </pre>
             </div>
-
-            <div class="mb-4">
-                <h3>POST /users/:id/transfer</h3>
-                <p>Transfer funds from one user to another.</p>
-                <p><strong>Request Body:</strong></p>
-                <pre>
-{
-    "recipient_id": 2,
-    "amount": 30.00
-}
-                </pre>
-                <p><strong>Response:</strong></p>
-                <pre>
-{
-    "message": "Transfer successful",
-    "sender_new_balance": 70.00,
-    "recipient_new_balance": 130.00
-}
-                </pre>
-            </div>
-
+            
             <div class="mb-4">
                 <h3>GET /users/:id/transactions</h3>
-                <p>Retrieve the transaction history of a user.</p>
+                <p>Retrieve the transaction history of a specific user by their ID.</p>
                 <p><strong>Response:</strong></p>
                 <pre>
 [
@@ -160,12 +124,59 @@
             </div>
 
             <div class="mb-4">
-                <h3>DELETE /users/:id</h3>
-                <p>Delete a user by their ID.</p>
+                <h3>POST /users/:id/deposit</h3>
+                <p>Add funds to a user’s account. Supports deposits in different currencies with automatic conversion based on current exchange rates.</p>
+                <p><strong>Request Body:</strong></p>
+                <pre>
+{
+    "amount": 50.00,
+    "currency": "EUR"
+}
+                </pre>
                 <p><strong>Response:</strong></p>
                 <pre>
 {
-    "message": "User deleted successfully."
+    "message": "Deposit successful",
+    "new_balance": 150.00
+}
+                </pre>
+            </div>
+
+            <div class="mb-4">
+                <h3>POST /users/:id/withdraw</h3>
+                <p>Withdraw funds from a user’s account. Handles currency conversion if specified in the request.</p>
+                <p><strong>Request Body:</strong></p>
+                <pre>
+{
+    "amount": 50.00,
+    "currency": "USD"
+}
+                </pre>
+                <p><strong>Response:</strong></p>
+                <pre>
+{
+    "message": "Withdrawal successful",
+    "new_balance": 250.00
+}
+                </pre>
+            </div>
+
+            <div class="mb-4">
+                <h3>POST /users/:id/transfer</h3>
+                <p>Transfer funds between users with automatic currency conversion.</p>
+                <p><strong>Request Body:</strong></p>
+                <pre>
+{
+    "recipient_id": 2,
+    "amount": 100.00
+}
+                </pre>
+                <p><strong>Response:</strong></p>
+                <pre>
+{
+    "message": "Transfer successful",
+    "sender_new_balance": 300.00,
+    "recipient_new_balance": 650.00
 }
                 </pre>
             </div>

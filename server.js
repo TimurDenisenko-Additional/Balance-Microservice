@@ -56,11 +56,23 @@ const users = [
   }
 ]
 
+const rates = {
+  USD: 1,
+  EUR: 0.92,
+  GBP: 0.78
+};
+
+
+function convertCurrency(amount, fromCurrency, toCurrency) {
+  if (fromCurrency === toCurrency) 
+    return amount;
+  const rate = rates[toCurrency] / rates[fromCurrency];
+  return parseFloat((amount * rate).toFixed(2));
+}
+
 function isUserExisting(id, user) {
   return !isNaN(id) && user !== undefined;
 } 
-
-app.use(express.json());
 
 app.get('/users', (req, res) => {
   res.json(users);
@@ -110,31 +122,33 @@ app.post('/users', (req, res) => {
   res.status(201).json({ message: "User created successfully", user: newUser });
 });
 
-app.post('/users/:id/withdraw', (req, res) => {
-  let id = parseInt(req.params.id);
-  const { amount } = req.body;
-  const user = users.find(user => user.id === id);
-  if (!isUserExisting(id, user)) {
-    return res.status(404).json({ error: "User not found" });
-  }
-  if (user.balance < amount) {
-    return res.status(400).json({ error: "Insufficient balance" });
-  }
-  user.balance -= amount;
-  user.transaction_history.push({ type: "Withdraw", sum: amount, date: new Date() });
-  res.json({ message: "Withdrawal successful", user });
-});
-
 app.post('/users/:id/deposit', (req, res) => {
   let id = parseInt(req.params.id);
-  const { amount } = req.body;
+  const { amount, currency } = req.body;
   const user = users.find(user => user.id === id);
   if (!isUserExisting(id, user)) {
     return res.status(404).json({ error: "User not found" });
   }
-  user.balance += amount;
-  user.transaction_history.push({ type: "Deposit", sum: amount, date: new Date() });
+  const depositAmount = convertCurrency(amount, currency || user.currency, user.currency);
+  user.balance += depositAmount;
+  user.transaction_history.push({ type: "Deposit", sum: depositAmount, date: new Date() });
   res.json({ message: "Deposit successful", user });
+});
+
+app.post('/users/:id/withdraw', (req, res) => {
+  let id = parseInt(req.params.id);
+  const { amount, currency } = req.body;
+  const user = users.find(user => user.id === id);
+  if (!isUserExisting(id, user)) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  const withdrawAmount = convertCurrency(amount, currency || user.currency, user.currency);
+  if (user.balance < withdrawAmount) {
+    return res.status(400).json({ error: "Insufficient balance" });
+  }
+  user.balance -= withdrawAmount;
+  user.transaction_history.push({ type: "Withdraw", sum: withdrawAmount, date: new Date() });
+  res.json({ message: "Withdrawal successful", user });
 });
 
 app.post('/users/:id/transfer', (req, res) => {
@@ -151,13 +165,15 @@ app.post('/users/:id/transfer', (req, res) => {
   if (sender.balance < amount) {
     return res.status(400).json({ error: "Insufficient balance" });
   }
+  const convertedAmount = convertCurrency(amount, sender.currency, recipient.currency);
   sender.balance -= amount;
-  recipient.balance += amount;
+  recipient.balance += convertedAmount;
   const transactionDate = new Date();
   sender.transaction_history.push({ type: "Transfer", sum: -amount, date: transactionDate, id: recipientId });
-  recipient.transaction_history.push({ type: "Transfer", sum: amount, date: transactionDate, id: senderId });
+  recipient.transaction_history.push({ type: "Transfer", sum: convertedAmount, date: transactionDate, id: senderId });
   res.json({ message: "Transfer successful", sender, recipient });
 });
+
 
 app.put('/users/:id', (req, res) => {
   const id = parseInt(req.params.id);
