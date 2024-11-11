@@ -9,79 +9,88 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     fetch(`${baseUrl}/users/${userId}`)
-        .then(response => response.json())
-        .then(user => {
-            document.getElementById("username").textContent = user.username;
-            document.getElementById("email").textContent = user.email;
-            document.getElementById("balance").textContent = `${user.balance} ${user.currency}`;
-            return fetch(`${baseUrl}/users/${userId}/transactions`);
-        })
-        .then(response => response.json())
-        .then(transactions => {
-            const transactionsList = document.getElementById("transactions");
-            transactions.forEach(transaction => {
-                const li = document.createElement("li");
+    .then(response => response.json())
+    .then(user => {
+        document.getElementById("username").textContent = user.username;
+        document.getElementById("email").textContent = user.email;
+        document.getElementById("balance").textContent = `${user.balance} ${user.currency}`;
+        return fetch(`${baseUrl}/users/${userId}/transactions`);
+    })
+    .then(response => response.json())
+    .then(transactions => {
+        const transactionsList = document.getElementById("transactions");
+        transactionsList.innerHTML = "";
 
-                if (transaction.type === "Transfer") {
-                    fetch(`${baseUrl}/users/${transaction.id}`)
-                        .then(response => response.json())
-                        .then(recipient => {
-                            li.innerHTML = `
-                                <div><strong>${transaction.type}</strong></div>
-                                <div>Recipient: ${recipient.username} | #${recipient.id}</div>
-                                <div>Amount: ${transaction.sum < 0 ? '' : '+'}${transaction.sum}</div>
-                                <div>${transaction.date}</div>
-                            `;
-                            transactionsList.appendChild(li);
-                        })
-                        .catch(() => {
-                            li.innerHTML = `
-                                <div><strong>${transaction.type}</strong></div>
-                                <div>Recipient: Unknown | #${transaction.id}</div>
-                                <div>Amount: ${transaction.sum < 0 ? '' : '+'}${transaction.sum}</div>
-                                <div>${transaction.date}</div>
-                            `;
-                            transactionsList.appendChild(li);
-                        });
-                } else {
-                    li.innerHTML = `
-                        <div><strong>${transaction.type}</strong></div>
-                        <div>Amount: ${transaction.sum < 0 ? '' : '+'}${transaction.sum}</div>
-                        <div>${transaction.date}</div>
-                    `;
-                    transactionsList.appendChild(li);
-                }
-            });
-        })
-        .catch(error => {
-            console.error("Error fetching data:", error);
-            document.body.innerHTML = `<h1>${error.message}</h1>`;
+        transactions.forEach(transaction => {
+            if (transaction.type === "Transfer In" && transaction.recipient_id !== parseInt(userId)) {
+                // Skip `Transfer In` transactions unless they are to the current user
+                return;
+            }
+
+            const li = document.createElement("li");
+            li.className = "transaction-item";
+
+            let transactionDetails = `
+                <div><strong>Type:</strong> ${transaction.type}</div>
+                <div><strong>Date:</strong> ${new Date(transaction.date).toLocaleString()}</div>
+            `;
+
+            if (transaction.type === "Transfer Out" || transaction.type === "Transfer In") {
+                const relatedUserId = transaction.type === "Transfer Out" ? transaction.recipient_id : transaction.sender_id;
+
+                fetch(`${baseUrl}/users/${relatedUserId}`)
+                    .then(response => response.json())
+                    .then(relatedUser => {
+                        transactionDetails += `
+                            <div><strong>${transaction.type === "Transfer Out" ? "To:" : "From:"}</strong> ${relatedUser.username} (#${relatedUser.id})</div>
+                            <div><strong>Amount:</strong> ${transaction.amount < 0 ? "" : "+"}${transaction.amount}</div>
+                        `;
+                        li.innerHTML = transactionDetails;
+                        transactionsList.appendChild(li);
+                    })
+                    .catch(() => {
+                        transactionDetails += `
+                            <div><strong>${transaction.type === "Transfer Out" ? "To:" : "From:"}</strong> Unknown (#${relatedUserId})</div>
+                            <div><strong>Amount:</strong> ${transaction.amount < 0 ? "" : "+"}${transaction.amount}</div>
+                        `;
+                        li.innerHTML = transactionDetails;
+                        transactionsList.appendChild(li);
+                    });
+            } else {
+                transactionDetails += `<div><strong>Amount:</strong> ${transaction.amount < 0 ? "" : "+"}${transaction.amount}</div>`;
+                li.innerHTML = transactionDetails;
+                transactionsList.appendChild(li);
+            }
         });
+    })
+    .catch(error => {
+        console.error("Error fetching data:", error);
+        document.body.innerHTML = `<h1>${error.message}</h1>`;
+    });
 
-        document.getElementById("transferForm").addEventListener("submit", (e) => {
-            e.preventDefault();
-            const recipientId = document.getElementById("recipientId").value;
-            const amount = parseFloat(document.getElementById("amount").value);
-    
-            fetch(`${baseUrl}/users/${userId}/transfer`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ recipientId, amount }),
+    document.getElementById("transferForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const recipientId = document.getElementById("recipientId").value;
+        const amount = parseFloat(document.getElementById("amount").value);
+
+        fetch(`${baseUrl}/users/${userId}/transfer`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ recipientId, amount }),
+        })
+            .then(response => {
+                if (!response.ok) throw new Error("Transfer failed");
+                return response.json();
             })
-                .then(response => {
-                    if (!response.ok) throw new Error("Transfer failed");
-                    if (recipientId === userId) throw new Error("Recipient id is equaling user id");
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById("transferMessage").innerHTML = "<strong style='color: green;'>Transfer Successful!</strong>";
-                    setTimeout(() => location.reload(), 1000);
-                })
-                .catch(error => {
-                    console.error("Error transferring money:", error);
-                    document.getElementById("transferMessage").innerHTML = "<strong style='color: red;'>Transfer Failed. Please try again.</strong>";
-                });
-        });
+            .then(data => {
+                document.getElementById("transferMessage").innerHTML = "<strong style='color: green;'>Transfer Successful!</strong>";
+                setTimeout(() => location.reload(), 1000);
+            })
+            .catch(error => {
+                console.error("Error transferring money:", error);
+                document.getElementById("transferMessage").innerHTML = "<strong style='color: red;'>Transfer Failed. Please try again.</strong>";
+            });
+    });
 });
